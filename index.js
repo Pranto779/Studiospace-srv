@@ -7,7 +7,7 @@ app.use(express.json())
 
 const PORT=process.env.PORT || 8000
 
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 const client = new MongoClient(process.env.MONGO_URI);
 
@@ -44,6 +44,18 @@ app.get('/features',async(req,res)=>{
 app.get('/studios',async(req,res)=>{
     const find=await Studiocollections.find().toArray()
     res.send(find)})
+app.get('/studios/:id',async(req,res)=>{
+  const id= req.params
+  const result=await Studiocollections.findOne({_id:new ObjectId(id)})
+  res.send(result)
+  
+})
+app.get('/listing/:email',async(req,res)=>{
+  const {email}= req.params
+  const result=await Studiocollections.findOne({email:email})
+  res.send(result)
+  
+})
 
 app.listen(PORT,()=>{
     console.log('server is running on Port',PORT);
