@@ -23,6 +23,7 @@ export async function connectToMongoDB() {
  const mongo_client=await connectToMongoDB()
  const db=mongo_client.db('StudioSpace')
  const Studiocollections=db.collection('StudioCollection')
+ const BookingCollections=db.collection('BookingCollections')
 
 app.get('/',(req,res)=>{
     res.send('Hello node ')
@@ -32,7 +33,6 @@ app.get('/',(req,res)=>{
 app.post('/add-studio',async(req,res)=>{
     const result=req.body
     const data=await Studiocollections.insertOne(result)
-    console.log('call');
     res.send(data)
 })
 // http://localhost:8000/features
@@ -45,16 +45,49 @@ app.get('/studios',async(req,res)=>{
     const find=await Studiocollections.find().toArray()
     res.send(find)})
 app.get('/studios/:id',async(req,res)=>{
-  const id= req.params
+  const {id}=req.params
   const result=await Studiocollections.findOne({_id:new ObjectId(id)})
   res.send(result)
   
 })
 app.get('/listing/:email',async(req,res)=>{
   const {email}= req.params
-  const result=await Studiocollections.findOne({email:email})
+  const result=await Studiocollections.find({email:email}).toArray()
   res.send(result)
   
+})
+// http://localhost:8000/listing/:id
+app.patch('/listing/:id',async(req,res)=>{
+  const {id}=req.params
+  const result=await Studiocollections.updateOne(
+    {_id:new ObjectId(id)},
+    {$set:req.body}
+  )
+  res.send(result)
+})
+app.delete('/listing/:id',async(req,res)=>{
+  const {id}=req.params
+  const result=await Studiocollections.deleteOne({_id:new ObjectId(id)})
+  res.send(result)
+})
+// http://localhost:8000/mybookCollection
+app.post('/mybookCollection',async(req,res)=>{
+  const Book= req.body
+  const Booking=await BookingCollections.insertOne(Book)
+  res.send(Booking)
+
+})
+
+// http://localhost:8000/mybooking
+app.get('/mybooking',async(req,res)=>{
+  const Book=await BookingCollections.find().toArray()
+  res.send(Book)
+})
+// http://localhost:8000/mybooking/:id
+app.delete('/mybooking/:id',async(req,res)=>{
+  const {id}=req.params
+  const result=await BookingCollections.deleteOne({_id:new ObjectId(id)})
+  res.send(result)
 })
 
 app.listen(PORT,()=>{
