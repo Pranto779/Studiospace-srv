@@ -6,8 +6,6 @@ app.use(cors());
 app.use(express.json());
 const Middlewere =async (req, res, next) => {
   const authdata = req.headers.authorization;
-
-  console.log(authdata);
   
 if (!authdata){
     return res.status(401).send({ msg: "Unauthorized" });
@@ -105,7 +103,11 @@ app.patch("/listing/:id", async (req, res) => {
   );
   res.send(result);
 });
-
+app.delete("/listing/:id", async (req, res) => {
+  const { id } = req.params;
+  const result = await Studiocollections.deleteOne({ _id: new ObjectId(id) });
+  res.send(result);
+});
 // http://localhost:8000/mybookCollection
 app.post("/mybookCollection", async (req, res) => {
   const Book = req.body;
@@ -118,7 +120,12 @@ app.get("/mybooking",Middlewere, async (req, res) => {
   const Book = await BookingCollections.find().toArray();
   res.send(Book);
 });
-
+// http://localhost:8000/mybooking/:id
+app.delete("/mybooking/:id",async (req, res) => {
+  const { id } = req.params;
+  const result = await BookingCollections.deleteOne({ _id: new ObjectId(id) });
+  res.send(result);
+});
 app.get("/studios", async (req, res) => {
   const { category } = req.query;
 
