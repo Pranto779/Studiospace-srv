@@ -9,7 +9,31 @@ const Middlewere =async (req, res, next) => {
 
   console.log(authdata);
   
+if (!authdata){
+    return res.status(401).send({ msg: "Unauthorized" });
 
+}
+const token=authdata.split(' ')[1]
+if(!token){
+  return res.status(401).send({ msg: "Unauthorized" });
+}
+
+const JWKS=createRemoteJWKSet(new URL('http://localhost:3000/api/auth/jwks'))
+
+
+
+
+try {
+  const {payload} =await jwtVerify(token,JWKS)
+   next();
+} catch (error) {
+  return res.status(500).send({ msg: "Server error" });
+}
+
+ 
+ 
+  
+};
 
 const PORT = process.env.PORT || 8000;
 
