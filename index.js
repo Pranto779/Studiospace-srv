@@ -66,7 +66,7 @@ app.post("/add-studio", async (req, res) => {
 });
 // http://localhost:8000/features
 app.get("/features", async (req, res) => {
-  const find = await Studiocollections.find().limit(6).toArray();
+  const find = await Studiocollections.find().sort({ _id: -1 }).limit(6).toArray();
   res.send(find);
 });
 // check
