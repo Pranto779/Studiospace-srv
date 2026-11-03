@@ -70,7 +70,7 @@ app.get("/features", async (req, res) => {
   res.send(find);
 });
 
-app.get("/studios/:id",Middlewere, async (req, res) => {
+app.get("/studios/:id", async (req, res) => {
  
   const { id } = req.params;
   const result = await Studiocollections.findOne({ _id: new ObjectId(id) });
@@ -121,6 +121,31 @@ app.get("/mybooking",Middlewere, async (req, res) => {
   res.send(Book);
 });
 // http://localhost:8000/mybooking/:id
+app.patch("/mybooking/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { date, startTime, hours, totalPrice } = req.body;
+    const result = await BookingCollections.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          date,
+          startTime,
+          hours,
+          totalPrice,
+        },
+      }
+    );
+
+    if (!result.matchedCount) {
+      return res.status(404).send({ msg: "Booking not found" });
+    }
+
+    res.send(result);
+  } catch {
+    res.status(400).send({ msg: "Invalid booking update" });
+  }
+});
 app.delete("/mybooking/:id",async (req, res) => {
   const { id } = req.params;
   const result = await BookingCollections.deleteOne({ _id: new ObjectId(id) });
