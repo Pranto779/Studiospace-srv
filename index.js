@@ -69,7 +69,7 @@ app.get("/features", async (req, res) => {
   const find = await Studiocollections.find().limit(6).toArray();
   res.send(find);
 });
-
+// check
 app.get("/studios/:id", async (req, res) => {
  
   const { id } = req.params;
@@ -160,6 +160,10 @@ app.get("/studios", async (req, res) => {
 
   res.send(result);
 });
-app.listen(PORT, () => {
-  console.log("server is running on Port", PORT);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log("server is running on Port", PORT);
+  });
+}
+
+export default app;
